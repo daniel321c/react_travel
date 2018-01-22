@@ -1,26 +1,34 @@
-var config = {
-	entry: './main.js',
-	output: {
-		path: '/c/Users/Jichen/Documents/reactApp',
-		filename: 'index.js',
+var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    entry: './index.jsx',
+    output: {
+        path: path.resolve('dist'),
+        filename: 'bundle.js'
 	},
-	devServer: {
-		inline: true,
-		port: 8080,
-	},
-	module:{
-		loaders: [
-			{
-				test: /\.jsx?$/,
-				exclude: /node_modules/,
-				loader: 'babel-loader',
-				query:{
-					presets:['es2015','react']
-				}
-			}
-		]
-	}
+	devtool: "source-map",
+    resolve: {
+        extensions: ['.js', '.jsx']
+    },
+    module: {
+        loaders: [
+            {
+                test: /\.jsx?$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel-loader',
+                query: {
+                    presets: ['react', 'es2015', 'stage-3']
+                }
+            }
+        ]
+    },
+    plugins: [new HtmlWebpackPlugin({
+        template: './index.html',
+        filename: 'index.html',
+        inject: 'body'
+    })],
+    devServer: {
+        historyApiFallback: true
+    }
 }
-
-module.exports = config
-
