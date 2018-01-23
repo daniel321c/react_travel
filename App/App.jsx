@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { history } from '../_helpers';
@@ -23,22 +23,38 @@ class App extends React.Component {
     render() {
         const { alert } = this.props;
         return (
-            <div className="jumbotron">
-                <div className="container">
-                    <div className="col-sm-8 col-sm-offset-2">
-                        {alert.message &&
-                            <div className={`alert ${alert.type}`}>{alert.message}</div>
-                        }
-                        <Router history={history}>
-                            <div>
-                                <PrivateRoute exact path="/" component={HomePage} />
-                                <Route path="/login" component={LoginPage} />
-                                <Route path="/register" component={RegisterPage} />
-                            </div>
-                        </Router>
-                    </div>
+            <Router>
+                <div>
+                    <h2>Welcome</h2>
+                    <ul>
+                        <li><Link to={'/'}>Home</Link></li>
+                        <li><Link to={'/Login'}>Login</Link></li>
+                        <li><Link to={'/register'}>Register</Link></li>
+                    </ul>
+                    <hr />
+                    <Switch>
+                        <PrivateRoute exact path='/' component={HomePage} />
+                        <Route exact path='/Login' component={LoginPage} />
+                        <Route exact path="/register" component={RegisterPage} />
+                    </Switch>
                 </div>
-            </div>
+            </Router>
+            // <div className="jumbotron">
+            //     <div className="container">
+            //         <div className="col-sm-8 col-sm-offset-2">
+            //             {alert.message &&
+            //                 <div className={`alert ${alert.type}`}>{alert.message}</div>
+            //             }
+            //             <Router history={history}>
+            //                 <div>
+            //                     <PrivateRoute exact path="/" component={HomePage} />
+            //                     <Route path="/login" component={LoginPage} />
+            //                     <Route path="/register" component={RegisterPage} />
+            //                 </div>
+            //             </Router>
+            //         </div>
+            //     </div>
+            // </div>
         );
     }
 }

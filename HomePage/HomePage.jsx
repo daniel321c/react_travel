@@ -47,6 +47,8 @@ class HomePage extends React.Component {
 function mapStateToProps(state) {
     const { users, authentication } = state;
     const { user } = authentication;
+
+    console.log({user, users})
     return {
         user,
         users

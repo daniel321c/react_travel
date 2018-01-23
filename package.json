@@ -23,5 +23,6 @@
   },
   "devDependencies": {
     "babel-preset-stage-3": "^6.24.1"
-  }
+  },
+  "proxy": "localhost:3000"
 }
