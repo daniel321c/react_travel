@@ -19,7 +19,7 @@ function login(username, password) {
             .then(
                 user => { 
                     dispatch(success(user));
-                    history.push('/');
+                    history.push('/asd');
                 },
                 error => {
                     dispatch(failure(error));
@@ -67,7 +67,7 @@ function getAll() {
 
         userService.getAll()
             .then(
-                users => dispatch(success(users)),
+                users => {dispatch(success(users))},
                 error => dispatch(failure(error))
             );
     };

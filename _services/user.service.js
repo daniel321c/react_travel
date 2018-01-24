@@ -1,5 +1,5 @@
 import { authHeader } from '../_helpers';
-
+import * as jwt from 'jsonwebtoken';
 export const userService = {
     login,
     logout,
@@ -17,15 +17,18 @@ function login(username, password) {
         body: JSON.stringify({ username, password })
     };
 
-    return fetch('/users/authenticate', requestOptions)
+    return fetch('/api/authenticate', requestOptions)
         .then(response => {
+
+
             if (!response.ok) { 
                 return Promise.reject(response.statusText);
             }
-
             return response.json();
         })
         .then(user => {
+            console.log(user);
+
             // login successful if there's a jwt token in the response
             if (user && user.token) {
                 // store user details and jwt token in local storage to keep user logged in between page refreshes
@@ -47,7 +50,7 @@ function getAll() {
         headers: authHeader()
     };
 
-    return fetch('/users', requestOptions).then(handleResponse);
+    return fetch('/api/accounts', requestOptions).then(handleResponse);
 }
 
 function getById(id) {
