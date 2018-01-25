@@ -3,47 +3,58 @@ var passport = require('passport');
 var jwt = require('jsonwebtoken');
 
 var config = require('../config');
-var Account = require('../models/account');
+var User = require('../models/user');
 
 var app = express();
 var apiRoutes = express.Router();
 
 apiRoutes.post('/authenticate', function (req, res, next) {
-    passport.authenticate('local', function (err, user, info) {
+    passport.authenticate('local-login', function (err, user, info) {
         if (err) { return next(err); }
-        if (!user) { return res.json({ success: false, message: 'Authentication failed. User not found.' }) };
+        if (!user) { return res.json({ success: false, message: info.message }) };
 
         const payload = {
-            username: user.username
+            username: user.local.email
         };
 
         var token = jwt.sign(payload, config.jwt_secret, { expiresIn: 120 });
 
         // return the information including token as JSON
         res.json({
-            username: user.username,
             success: true,
-            message: 'Enjoy your token!',
+            username: user.local.email,
             token: token
         });
 
     })(req, res, next);
 });
 
-apiRoutes.post('/signup', function (req, res) {
-    Account.register(new Account({ username: req.body.username }), req.body.password, function (err, account) {
-        if (err) {
-            return res.json('fail');
-        }
+apiRoutes.post('/signup', function(req, res, next){
 
-        passport.authenticate('local')(req, res, function () {
-            return res.json('asd');
+    passport.authenticate('local-signup', function(err,user,info){
+
+        if (err) { return next(err); }
+
+        if (!user) { return res.json({ success: false, message: info.message }) };
+        const payload = {
+            username: user.local.email
+        };
+
+        var token = jwt.sign(payload, config.jwt_secret, { expiresIn: 600 });
+
+        // return the information including token as JSON
+        return res.json({
+            success: true,
+            username: user.local.email,
+            token: token
         });
-    });
+
+        
+    })(req, res, next);
 });
 
-// route middleware to verify a token
 
+// route middleware to verify a token
 apiRoutes.use(function (req, res, next) {
 
     // check header or url parameters or post parameters for token

@@ -8,14 +8,10 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-var config = require('./config');
+
 var api_routes = require('./routes/apiRouter');
 
 var app = express();
-
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
@@ -29,17 +25,13 @@ app.use(require('express-session')({
     saveUninitialized: false
 }));
 app.use(passport.initialize());
-app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api', api_routes);
 
 
 // passport config
-var Account = require('./models/account');
-passport.use(new LocalStrategy(Account.authenticate()));
-passport.serializeUser(Account.serializeUser());
-passport.deserializeUser(Account.deserializeUser());
+require('./config/passport')(passport);
 
 // mongoose
 mongoose.connect('mongodb://root:root@ds111648.mlab.com:11648/react_database');
