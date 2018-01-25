@@ -19,7 +19,7 @@ function login(username, password) {
             .then(
                 user => { 
                     dispatch(success(user));
-                    history.push('/asd');
+                    history.push('/');
                 },
                 error => {
                     dispatch(failure(error));
