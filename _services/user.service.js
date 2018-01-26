@@ -14,7 +14,7 @@ function login(username, password) {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email:username, password })
     };
 
     return fetch('/api/authenticate', requestOptions)
@@ -50,7 +50,7 @@ function getAll() {
         headers: authHeader()
     };
 
-    return fetch('/api/accounts', requestOptions).then(handleResponse);
+    return fetch('/api/users', requestOptions).then(handleResponse);
 }
 
 function getById(id) {

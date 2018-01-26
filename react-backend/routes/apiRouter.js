@@ -67,7 +67,7 @@ apiRoutes.use(function (req, res, next) {
         // verifies secret and checks exp
         jwt.verify(token, config.jwt_secret, function (err, decoded) {
             if (err) {
-                return res.json({ success: false, message: 'Failed to authenticate token.' });
+                return res.json({ success: false, message: err.message});
             } else {
                 // if everything is good, save to request for use in other routes
                 req.decoded = decoded;
@@ -89,9 +89,9 @@ apiRoutes.get('/', function (req, res, next) {
     res.json({ message: 'Welcome to API' });
 });
 
-apiRoutes.get('/accounts', function (req, res) {
-    Account.find({}, (err, accounts) => {
-        res.json(accounts);
+apiRoutes.get('/users', function (req, res) {
+    User.find({}, (err, users) => {
+        res.json(users);
     })
 });
 
