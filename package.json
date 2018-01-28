@@ -2,7 +2,7 @@
   "name": "o211",
   "version": "1.0.0",
   "description": "React Application",
-  "main": "index.jsx",
+  "main": "./src/index.jsx",
   "scripts": {
     "start": "webpack-dev-server --hot"
   },
@@ -21,6 +21,7 @@
     "material-ui-icons": "^1.0.0-beta.17",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
+    "react-google-maps": "^9.4.5",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",

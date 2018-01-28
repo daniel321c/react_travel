@@ -2,12 +2,14 @@ import React from 'react';
 import { HashRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { history } from '../_helpers';
-import { alertActions } from '../_actions';
-import { PrivateRoute } from '../_components';
-import { HomePage } from '../HomePage';
-import { LoginPage } from '../LoginPage';
-import { RegisterPage } from '../RegisterPage';
+import { createHashHistory} from 'history';
+const history = createHashHistory();
+// import { alertActions } from '../_actions';
+import { PrivateRoute } from './components';
+import { HomePage } from './home';
+import { LoginPage } from './login';
+import { RegisterPage } from './register';
+ import { TravelPage } from './travel';
 
 
 import PropTypes from 'prop-types';
@@ -36,32 +38,35 @@ import DeleteIcon from 'material-ui-icons/Delete';
 import ReportIcon from 'material-ui-icons/Report';
 
 const mailFolderListItems = (
-    <div>
-        <ListItem button>
-            <ListItemIcon>
-                <InboxIcon />
-            </ListItemIcon>
-            <ListItemText primary="Inbox" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <StarIcon />
-            </ListItemIcon>
-            <ListItemText primary="Starred" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <SendIcon />
-            </ListItemIcon>
-            <ListItemText primary="Send mail" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <DraftsIcon />
-            </ListItemIcon>
-            <ListItemText primary="Drafts" />
-        </ListItem>
-    </div>
+    <Router>
+        <div>
+
+            <ListItem component={Link} to="/" button>
+                <ListItemIcon>
+                    <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary='Home' />
+            </ListItem>
+            <ListItem component={Link} to="/Travel" button>
+                <ListItemIcon>
+                    <InboxIcon />
+                </ListItemIcon>
+                <ListItemText primary='Travel' />
+            </ListItem>
+            <ListItem component={Link} to="/Login" button>
+                <ListItemIcon>
+                    <StarIcon />
+                </ListItemIcon>
+                <ListItemText primary="Login" />
+            </ListItem>
+            <ListItem component={Link} to="/register" button>
+                <ListItemIcon>
+                    <SendIcon />
+                </ListItemIcon>
+                <ListItemText primary="Register" />
+            </ListItem>
+
+        </div></Router>
 );
 
 const otherMailFolderListItems = (
@@ -92,8 +97,8 @@ const drawerWidth = 240;
 const styles = theme => ({
     root: {
         width: '100%',
-        height: 430,
-        marginTop: theme.spacing.unit * 3,
+        height: '100%',
+        //marginTop: theme.spacing.unit * 3,
         zIndex: 1,
         overflow: 'hidden',
     },
@@ -180,7 +185,8 @@ const styles = theme => ({
 
 class App extends React.Component {
 
-    handleDrawerOpen() {console.log('this is:', this);
+    handleDrawerOpen() {
+        console.log('this is:', this);
         this.setState({ open: true });
     };
 
@@ -206,12 +212,12 @@ class App extends React.Component {
         const { dispatch } = this.props;
         history.listen((location, action) => {
             // clear alert on location change
-            dispatch(alertActions.clear());
+            // dispatch(alertActions.clear());
         });
     }
 
     render() {
-        const { alert } = this.props;
+        // const { alert } = this.props;
         const { classes, theme } = this.props;
         const { anchor, open } = this.state;
         const drawer = (
@@ -232,19 +238,9 @@ class App extends React.Component {
                     <Divider />
                     <List className={classes.list}>{mailFolderListItems}</List>
                     <Divider />
-                    <List className={classes.list}>{otherMailFolderListItems}</List>
                 </div>
             </Drawer>
         );
-
-        let before = null;
-        let after = null;
-
-        if (anchor === 'left') {
-            before = drawer;
-        } else {
-            after = drawer;
-        }
         return (
             // <Router>
             //     <div>
@@ -280,17 +276,6 @@ class App extends React.Component {
             // </div>
 
             <div className={classes.root}>
-                <TextField
-                    id="persistent-anchor"
-                    select
-                    label="Anchor"
-                    value={anchor}
-                    onChange={this.handleChangeAnchor}
-                    margin="normal"
-                >
-                    <MenuItem value="left">left</MenuItem>
-                    <MenuItem value="right">right</MenuItem>
-                </TextField>
                 <div className={classes.appFrame}>
                     <AppBar
                         className={classNames(classes.appBar, {
@@ -308,20 +293,28 @@ class App extends React.Component {
                                 <MenuIcon />
                             </IconButton>
                             <Typography type="title" color="inherit" noWrap>
-                                Persistent drawer
-                  </Typography>
+                                React Application
+                            </Typography>
                         </Toolbar>
                     </AppBar>
-                    {before}
+                    {drawer}
                     <main
                         className={classNames(classes.content, classes[`content-${anchor}`], {
                             [classes.contentShift]: open,
                             [classes[`contentShift-${anchor}`]]: open,
                         })}
                     >
-                        <Typography>{'You think water moves fast? You should see ice.'}</Typography>
+                        
+                            <Router>
+                            <Switch>
+                                <Route exact path="/" component={HomePage} />
+                                <Route exact path="/Travel" component={TravelPage} />
+                                <Route exact path='/Login' component={LoginPage} />
+                                <Route exact path="/register" component={RegisterPage} />
+                            </Switch>
+                            </Router>
+                        
                     </main>
-                    {after}
                 </div>
             </div>
         );
@@ -332,10 +325,11 @@ App.propTypes = {
     theme: PropTypes.object.isRequired,
 };
 function mapStateToProps(state) {
-    const { alert } = state;
-    return {
-        alert
-    };
+    // const { alert } = state;
+    // return {
+    //     alert
+    // };
+    return {};
 }
 
 const connectedApp = withStyles(styles, { withTheme: true })(connect(mapStateToProps)(App));
