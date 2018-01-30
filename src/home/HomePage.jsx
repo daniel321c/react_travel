@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 class HomePage extends React.Component {
-
+    constructor(props) {
+        super(props); 
+    }
     render() {
         return (
             <div>
-                Hello, this is the introduction page for my travel planning application.
+                Hello, this is Home Page
             </div>
         );
     }
@@ -16,6 +18,9 @@ class HomePage extends React.Component {
 
 
 function mapStateToProps(state) {
+    return{
+        
+    }
 }
 
 const connectedHomePage = connect(mapStateToProps)(HomePage);

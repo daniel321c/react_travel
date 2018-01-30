@@ -9,12 +9,13 @@ import { PrivateRoute } from './components';
 import { HomePage } from './home';
 import { LoginPage } from './login';
 import { RegisterPage } from './register';
- import { TravelPage } from './travel';
+import { TravelPage } from './travel';
 
 
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
 import classNames from 'classnames';
+
+import { withStyles } from 'material-ui/styles';
 import Drawer from 'material-ui/Drawer';
 import AppBar from 'material-ui/AppBar';
 import Toolbar from 'material-ui/Toolbar';
@@ -24,9 +25,7 @@ import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 import IconButton from 'material-ui/IconButton';
-import MenuIcon from 'material-ui-icons/Menu';
-import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
-import ChevronRightIcon from 'material-ui-icons/ChevronRight';
+
 
 import { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
 import InboxIcon from 'material-ui-icons/MoveToInbox';
@@ -36,61 +35,14 @@ import SendIcon from 'material-ui-icons/Send';
 import MailIcon from 'material-ui-icons/Mail';
 import DeleteIcon from 'material-ui-icons/Delete';
 import ReportIcon from 'material-ui-icons/Report';
+import MenuIcon from 'material-ui-icons/Menu';
+import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
+import BeachAccessIcon from 'material-ui-icons/BeachAccess'
+import HomeIcon from 'material-ui-icons/Home'
+import LogoutIcon from 'material-ui-icons/ExitToApp'
+import LoginIcon from 'material-ui-icons/AccountBox'
 
-const mailFolderListItems = (
-    <Router>
-        <div>
-
-            <ListItem component={Link} to="/" button>
-                <ListItemIcon>
-                    <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary='Home' />
-            </ListItem>
-            <ListItem component={Link} to="/Travel" button>
-                <ListItemIcon>
-                    <InboxIcon />
-                </ListItemIcon>
-                <ListItemText primary='Travel' />
-            </ListItem>
-            <ListItem component={Link} to="/Login" button>
-                <ListItemIcon>
-                    <StarIcon />
-                </ListItemIcon>
-                <ListItemText primary="Login" />
-            </ListItem>
-            <ListItem component={Link} to="/register" button>
-                <ListItemIcon>
-                    <SendIcon />
-                </ListItemIcon>
-                <ListItemText primary="Register" />
-            </ListItem>
-
-        </div></Router>
-);
-
-const otherMailFolderListItems = (
-    <div>
-        <ListItem button>
-            <ListItemIcon>
-                <MailIcon />
-            </ListItemIcon>
-            <ListItemText primary="All mail" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <DeleteIcon />
-            </ListItemIcon>
-            <ListItemText primary="Trash" />
-        </ListItem>
-        <ListItem button>
-            <ListItemIcon>
-                <ReportIcon />
-            </ListItemIcon>
-            <ListItemText primary="Spam" />
-        </ListItem>
-    </div>
-);
+import RegisterIcon from 'material-ui-icons/GroupAdd'
 
 const drawerWidth = 240;
 
@@ -200,6 +152,11 @@ class App extends React.Component {
         });
     };
 
+    logout(){
+        localStorage.removeItem('user');
+        history.push('/');
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -209,6 +166,7 @@ class App extends React.Component {
         this.handleDrawerOpen = this.handleDrawerOpen.bind(this);
         this.handleDrawerClose = this.handleDrawerClose.bind(this);
         this.handleChangeAnchor = this.handleChangeAnchor.bind(this)
+        this.logout = this.logout.bind(this)
         const { dispatch } = this.props;
         history.listen((location, action) => {
             // clear alert on location change
@@ -220,6 +178,44 @@ class App extends React.Component {
         // const { alert } = this.props;
         const { classes, theme } = this.props;
         const { anchor, open } = this.state;
+
+        const mailFolderListItems = (
+            <Router>
+                <div>
+                    <ListItem component={Link} to="/" button>
+                        <ListItemIcon>
+                            <HomeIcon />
+                        </ListItemIcon>
+                        <ListItemText primary='Home' />
+                    </ListItem>
+                    <ListItem component={Link} to="/Travel" button>
+                        <ListItemIcon>
+                            <BeachAccessIcon />
+                        </ListItemIcon>
+                        <ListItemText primary='Travel' />
+                    </ListItem>
+                    <ListItem component={Link} to="/Login" button>
+                        <ListItemIcon>
+                            <LoginIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Login" />
+                    </ListItem>
+                    <ListItem component={Link} to="/register" button>
+                        <ListItemIcon>
+                            <RegisterIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Register" />
+                    </ListItem>
+                    <ListItem onClick={this.logout} button>
+                        <ListItemIcon>
+                            <LogoutIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Logout" />
+                    </ListItem>
+        
+                </div></Router>
+        );
+
         const drawer = (
             <Drawer
                 type="persistent"
