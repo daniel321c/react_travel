@@ -32,9 +32,6 @@ import InboxIcon from 'material-ui-icons/MoveToInbox';
 import DraftsIcon from 'material-ui-icons/Drafts';
 import StarIcon from 'material-ui-icons/Star';
 import SendIcon from 'material-ui-icons/Send';
-import MailIcon from 'material-ui-icons/Mail';
-import DeleteIcon from 'material-ui-icons/Delete';
-import ReportIcon from 'material-ui-icons/Report';
 import MenuIcon from 'material-ui-icons/Menu';
 import ChevronLeftIcon from 'material-ui-icons/ChevronLeft';
 import BeachAccessIcon from 'material-ui-icons/BeachAccess'
@@ -110,9 +107,10 @@ const styles = theme => ({
         }),
         height: 'calc(100% - 56px)',
         marginTop: 56,
+        marginRight: -20,
         [theme.breakpoints.up('sm')]: {
             height: 'calc(100% - 64px)',
-            marginTop: 64,
+            marginTop: 45,
         },
     },
     'content-left': {
@@ -138,7 +136,6 @@ const styles = theme => ({
 class App extends React.Component {
 
     handleDrawerOpen() {
-        console.log('this is:', this);
         this.setState({ open: true });
     };
 
