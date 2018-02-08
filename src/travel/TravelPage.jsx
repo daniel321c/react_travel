@@ -4,14 +4,15 @@ import { withScriptjs, withGoogleMap, GoogleMap, Marker, DirectionsRenderer } fr
 import { connect } from 'react-redux';
 import Itinerary from './components/Itinerary'
 import Map from './components/Map'
+import Candidate from './components/Candidate'
 
 
 class TravelPage extends React.PureComponent {
 
-  setTrip(trip){
+  setPlan(plan){
     this.setState(
       {
-        trip: trip,
+        plan: plan,
       }
     )
   }
@@ -19,16 +20,17 @@ class TravelPage extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      trip: [],
+      plan: null,
     }
-    this.setTrip = this.setTrip.bind(this);
+    this.setPlan = this.setPlan.bind(this);
   }
 
   render() {
     return (
       <div style={{height: '100%'}}>
-        <Itinerary setTrip = {this.setTrip} />
-        <Map Trip = {this.state.trip}/>
+        <Itinerary setPlan = {this.setPlan} />
+        <Candidate style={{paddingLeft:10}} />
+        <Map Plan = {this.state.plan}/>
       </div>
     )
   }
