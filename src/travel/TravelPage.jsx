@@ -17,20 +17,32 @@ class TravelPage extends React.PureComponent {
     )
   }
 
+  addPoint(type, point){
+    this.setState({
+      newPoint:{
+        type: type,
+        point: point,
+      }
+    })
+  }
+
   constructor(props) {
     super(props);
     this.state = {
       plan: null,
+      newPoint: null,
     }
     this.setPlan = this.setPlan.bind(this);
+    this.addPoint = this.addPoint.bind(this);
+
   }
 
   render() {
     return (
       <div style={{height: '100%'}}>
-        <Itinerary setPlan = {this.setPlan} />
+        <Itinerary setPlan = {this.setPlan} newPoint = {this.state.newPoint} />
         <Candidate style={{paddingLeft:10}} />
-        <Map Plan = {this.state.plan}/>
+        <Map Plan= {this.state.plan}  addPoint={this.addPoint}/>
       </div>
     )
   }

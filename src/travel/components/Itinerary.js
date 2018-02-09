@@ -13,69 +13,70 @@ import Chip from 'material-ui/Chip';
 import Button from 'material-ui/Button';
 import Divider from 'material-ui/Divider';
 import Input from 'material-ui/Input';
+import update from 'immutability-helper';
 
 let plan = {
 
   points: [
     {
       name: 'Tokyo International Airport',
-      location:{
+      location: {
         lat: 35.5493932,
         lng: 139.7798386
       }
     },
     {
       name: 'Tokyo Tower',
-      location:{
+      location: {
         lat: 35.6585805,
         lng: 139.7454329
       }
     },
     {
       name: 'Meiji Shrine',
-      location:{
+      location: {
         lat: 35.6763976,
         lng: 139.6993259
       }
     },
     {
       name: 'Tokyo Disneyland',
-      location:{
+      location: {
         lat: 35.6328964,
         lng: 139.8803943
       }
     },
     {
       name: 'Grand Hyatt Tokyo',
-      location:{
+      location: {
         lat: 35.659426,
         lng: 139.729104
       }
     },
     {
       name: 'Tokyo Skytree',
-      location:{
+      location: {
         lat: 35.7100630,
         lng: 139.8107000
       }
     },
     {
       name: 'Sensō-ji',
-      location:{
+      location: {
         lat: 35.7147650,
         lng: 139.7966550139
       }
     },
     {
       name: 'Tokyo Marriott Hotel',
-      location:{
+      location: {
         lat: 35.6209750,
         lng: 139.7374410
       }
     },
     {
       name: 'Narita International Airport',
-      location:{
+      location: {
         lat: 35.7719870,
         lng: 140.3928500
       }
@@ -197,72 +198,147 @@ const styles = theme => ({
 });
 
 class DetailedExpansionPanel extends React.Component {
+  componentWillReceiveProps(nextProps) {
+    var point = nextProps.newPoint;
+    var selected = this.state.select;
+    if (point == null || selected == null) return;
 
-  expandOrCollapse(index) {
-    let x = this.state.expanded.slice();
-    x[index] = !x[index];
-    this.setState({
-      expanded: x,
-    })
+    if (point.type == 'Origin') {
+      this.setState(
+        update(this.state, {
+          trip: {
+            [selected]:{
+            origin: {
+              $set: point.point.name
+            }
+          }
+          }
+  }))
 
+}else if (point.type == 'Destination') {
+
+} else {
+
+}
   }
-  constructor(props) {
-    super(props);
-    this.props.setPlan(plan);
-    this.state = {
-      expanded: new Array(plan.trip.length).fill(true),
-    }
-    this.expandOrCollapse = this.expandOrCollapse.bind(this);
-  }
+expandOrCollapse(index) {
+  let x = this.state.expanded.slice();
+  x[index] = !x[index];
+  this.setState({
+    expanded: x,
+  })
+}
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.root}>
-        <div className={[classes.panel, classes.scrollbar].join(' ')}>
-
-          
-          {plan.trip.map((day, index) =>
-            <ExpansionPanel key={index} expanded={this.state.expanded[index]}  >
-              <ExpansionPanelSummary onClick={() => this.expandOrCollapse(index)} expandIcon={<ExpandMoreIcon />}>
-                <div className={classes.column}>
-                  <Typography className={classes.heading}>Day {day.dayNum}</Typography>
-                </div>
-              </ExpansionPanelSummary>
-
-
-              <ExpansionPanelDetails className={classes.details}>
-                <div className={classes.column}>
-
-
-                  <Chip label={day.origin} className={classes.chip} onDelete={() => { }} /><hr className={classes.transitbar} />
-
-                  {day.middlePoints.map((point, index) => <div key={index}> <Chip label={point} className={classes.chip} onDelete={() => { }} /><hr className={classes.transitbar} /></div>)}
-
-                  <Chip label={day.destination} className={classes.chip} onDelete={() => { }} />
-
-
-                </div>
-                <div className={classNames(classes.column, classes.helper)}>
-                  <Typography variant="caption">
-                    Select your destination of choice<br />
-                    <a href="#sub-labels-and-columns" className={classes.link}>
-                      Learn more
-              </a>
-                  </Typography>
-                </div>
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          )}
-        </div>
-        <div>
-          <Button variant="raised" color="primary">Edit</Button>
-          <Button size="medium">Cancel</Button>
-          <Button size="large" color="primary">Save</Button>
-        </div>
-      </div>
+addNewDay() {
+  var day = {
+    dayNum: this.state.trip.length + 1,
+    origin: '',
+    destination: '',
+    middlePoints: [],
+    waypoints: [],
+  };
+  this.setState(
+    update(this.state,
+      { trip: { $push: [day] } }
     )
+  )
+}
+
+deleteDay(index){
+  var state = update(this.state,
+    { trip: { $splice: [[index, 1]] } }
+  );
+  this.setState(state)
+  this.props.setPlan(
+    {
+      points: [],
+      trip: state.trip,
+    }
+  )
+}
+selectDay(index){
+  this.setState({
+    select: index,
+  })
+}
+save(){
+
+}
+edit(){
+
+}
+cancel(){
+
+}
+deletePlan(){
+
+}
+constructor(props) {
+  super(props);
+  this.props.setPlan(plan);
+  this.state = {
+    expanded: new Array(plan.trip.length).fill(true),
+    trip: plan.trip,
+    select: null
   }
+  this.expandOrCollapse = this.expandOrCollapse.bind(this);
+  this.addNewDay = this.addNewDay.bind(this);
+  this.deleteDay = this.deleteDay.bind(this);
+  this.selectDay = this.selectDay.bind(this);
+}
+
+render() {
+  const { classes } = this.props;
+  const { trip } = this.state
+  return (
+    <div className={classes.root}>
+      <div className={[classes.panel, classes.scrollbar].join(' ')}>
+
+
+        {trip.map((day, index) =>
+          <ExpansionPanel key={index} expanded={this.state.expanded[index]}  >
+            <ExpansionPanelSummary onClick={() => this.expandOrCollapse(index)} expandIcon={<ExpandMoreIcon />}>
+              <div className={classes.column}>
+                <Typography className={classes.heading}>Day {index + 1}</Typography>
+              </div>
+            </ExpansionPanelSummary>
+
+
+            <ExpansionPanelDetails className={classes.details}>
+              <div className={classes.column}>
+
+
+                <Chip label={day.origin} className={classes.chip} onDelete={() => { }} /><hr className={classes.transitbar} />
+
+                {day.middlePoints.map((point, index) => <div key={index}> <Chip label={point} className={classes.chip} onDelete={() => { }} /><hr className={classes.transitbar} /></div>)}
+
+                <Chip label={day.destination} className={classes.chip} onDelete={() => { }} />
+
+
+              </div>
+              <div className={classNames(classes.column, classes.helper)}>
+                <Typography variant="caption">
+                  Select your destination of choice<br />
+                  <a href="#sub-labels-and-columns" className={classes.link}>
+                    Learn more
+                    </a>
+                </Typography>
+              </div>
+            </ExpansionPanelDetails>
+            <Button onClick={() => this.deleteDay(index)}>Delete</Button>
+            <Button onClick={() => this.selectDay(index)}>{this.state.select == index ? 'Selected' : 'Select'}</Button>
+          </ExpansionPanel>
+        )}
+      </div>
+      <div>
+        <Button variant="raised" color="primary">Edit</Button>
+        <Button size="medium">Cancel</Button>
+        <Button size="large" color="primary">Save</Button>
+        <Button onClick={this.addNewDay}> New Day</Button>
+      </div>
+    </div>
+  )
+}
 }
 
 DetailedExpansionPanel.propTypes = {

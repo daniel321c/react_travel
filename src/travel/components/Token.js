@@ -8,7 +8,6 @@ import { findDOMNode } from 'react-dom'
 const tokenSource = {
     beginDrag(props) {
         return {
-            name: props.name,
             id: props.id,
             index: props.index,
         };
@@ -68,10 +67,10 @@ function dropCollect(connect) {
         connectDropTarget: connect.dropTarget(),
     }
 }
-function collect(connect, monitor) {
+function dragCollect(connect, monitor) {
     return {
         connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging(),
+        isDragging: monitor.getItem(),
     }
 }
 
@@ -85,18 +84,18 @@ class Token extends Component {
         this.handleDelete = this.handleDelete.bind(this);
     }
     render() {
-        const { connectDropTarget, connectDragSource, isDragging, name } = this.props;
-        return connectDropTarget(connectDragSource(
+        const { connectDropTarget, connectDragSource, isDragging, name,id } = this.props;
+        console.log(name);
+        console.log(isDragging);
+        return connectDragSource(connectDropTarget(
             <div style={{
-                // opacity: isDragging ? 0.5 : 1,
+                 opacity: isDragging ? isDragging.id == id? 0.5 :1 : 1,
                 cursor: 'move',
                 display: 'inline-block',
                 borderRadius: 16,
+                backgroundColor: 'white'
             }}>
                 <Chip
-                    style={{
-                        opacity: isDragging ? 0.5 : 1,
-                    }}
                     label={name}
                     onDelete={this.handleDelete}
                 />
@@ -107,8 +106,8 @@ class Token extends Component {
 
 Token.propTypes = {
     connectDragSource: PropTypes.func.isRequired,
-    isDragging: PropTypes.bool.isRequired,
+    //isDragging: PropTypes.bool.isRequired,
     name: PropTypes.string.isRequired,
 };
 
-export default DropTarget('token', tokenTarget, dropCollect)(DragSource('token', tokenSource, collect)(Token));
+export default DragSource('token', tokenSource, dragCollect)(DropTarget('token', tokenTarget, dropCollect)(Token));

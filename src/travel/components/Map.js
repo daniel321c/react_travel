@@ -5,6 +5,7 @@ import { SearchBox } from 'react-google-maps/lib/components/places/SearchBox'
 import FaAnchor from 'react-icons/lib/fa/anchor'
 import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
+import Button from 'material-ui/Button';
 
 function getRandomColor() {
     var letters = '0123456789ABCDEF';
@@ -70,6 +71,7 @@ const MyMapComponent = compose(
                         }
                     });
                     const nextMarkers = places.map(place => ({
+                        name: place.name,
                         position: place.geometry.location,
                     }));
                     const nextCenter = { lat: nextMarkers[0].position.lat(), lng: nextMarkers[0].position.lng() }
@@ -119,7 +121,16 @@ const MyMapComponent = compose(
                             })
                         }
                     }
-                }
+                },
+                addOrigin: (point)=>{
+                    this.props.addPoint('Origin', point);
+                },
+                addDestination: (point)=>{
+                    this.props.addPoint('Destination', point);
+                },
+                addWaypoint: (point)=>{
+                    this.props.addPoint('Waypoint', point);
+                },
             })
             this.props.Plan.trip.map(day =>
                 DirectionsService.route({
@@ -137,54 +148,104 @@ const MyMapComponent = compose(
                     }
                 })
             )
+        },
+        componentWillReceiveProps(nextProps) {
+            this.setState({
+                directions: [],
+            })
+            const DirectionsService = new google.maps.DirectionsService();
+            nextProps.Plan.trip.map(day =>
+                DirectionsService.route({
+                    origin: day.origin,
+                    destination: day.destination,
+                    waypoints: day.waypoints,
+                    travelMode: google.maps.TravelMode.DRIVING
+                }, (result, status) => {
+                    if (status === google.maps.DirectionsStatus.OK) {
+                        this.setState({
+                            directions: [...this.state.directions, result],
+                        });
+                    } else {
+                        console.error(`error fetching directions ${result}`);
+                    }
+                })
+            )
         }
     })
-)(props =>
-    <GoogleMap
-        ref={props.onMapMounted}
-        defaultZoom={18}
-        center={props.center}
-        onBoundsChanged={props.onBoundsChanged}
-    >
-        <SearchBox
-            ref={props.onSearchBoxMounted}
-            bounds={props.bounds}
-            controlPosition={google.maps.ControlPosition.TOP_LEFT}
-            onPlacesChanged={props.onPlacesChanged}
+)(props => {
+
+    return (
+        <GoogleMap
+            ref={props.onMapMounted}
+            defaultZoom={18}
+            center={props.center}
+            onBoundsChanged={props.onBoundsChanged}
         >
-            <input
-                type="text"
-                placeholder="Search"
-                style={{
-                    boxSizing: `border-box`,
-                    border: `1px solid transparent`,
-                    width: `240px`,
-                    height: `32px`,
-                    marginTop: `12px`,
-                    padding: `0 12px`,
-                    borderRadius: `3px`,
-                    boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
-                    fontSize: `14px`,
-                    outline: `none`,
-                    textOverflow: `ellipses`,
-                }}
-            />
-        </SearchBox>
-        {props.markers.map((marker, index) =>
-            <Marker key={index} position={marker.position} onClick={() => props.searchInfoWinOpen(index)}>
-                {index == props.searchInfoWinIndex && props.isInfoWinOpen && <InfoWindow onCloseClick={props.onToggleOpen}><FaAnchor /></InfoWindow>}
-            </Marker>)
-        }
+            <SearchBox
+                ref={props.onSearchBoxMounted}
+                bounds={props.bounds}
+                controlPosition={google.maps.ControlPosition.TOP_LEFT}
+                onPlacesChanged={props.onPlacesChanged}
+            >
+                <input
+                    type="text"
+                    placeholder="Search"
+                    style={{
+                        boxSizing: `border-box`,
+                        border: `1px solid transparent`,
+                        width: `240px`,
+                        height: `32px`,
+                        marginTop: `12px`,
+                        padding: `0 12px`,
+                        borderRadius: `3px`,
+                        boxShadow: `0 2px 6px rgba(0, 0, 0, 0.3)`,
+                        fontSize: `14px`,
+                        outline: `none`,
+                        textOverflow: `ellipses`,
+                    }}
+                />
+            </SearchBox>
+            {props.markers.map((marker, index) =>
+                <Marker key={index} position={marker.position} onClick={() => props.searchInfoWinOpen(index)}>
+                    {
+                        index == props.searchInfoWinIndex && 
+                        props.isInfoWinOpen && 
+                        <InfoWindow onCloseClick={props.onToggleOpen}>
+                            <div>
+                                <Button onClick={()=>props.addOrigin(marker)}>Add as Origin</Button>
+                                <Button onClick={()=>props.addDestination(marker)}>Add as Destination</Button>
+                                <Button onClick={()=>props.addWaypoint(marker)}>Add as Waypoint</Button>
+                            </div>
+                        </InfoWindow>
+                    }
+                </Marker>)
+            }
 
 
-        {props.Plan.points.map((point, index) =>
-            <Marker icon={props.customMarkerImg} key={index} position={point.location} onClick={() => props.onToggleOpen(index)}>
-                {index == props.infoWinIndex && props.isInfoWinOpen && <InfoWindow onCloseClick={props.onToggleOpen}>
-                    <Typography >{point.name}</Typography></InfoWindow>}
-            </Marker>)
-        }
-        {props.directions.map((direction, index) => <DirectionsRenderer key={index} options={{ suppressMarkers: true, polylineOptions: { strokeColor: getRandomColor() } }} directions={direction} />)}
-    </GoogleMap>
+            {props.Plan.points.map((point, index) =>
+                <Marker icon={props.customMarkerImg} key={index} position={point.location} onClick={() => props.onToggleOpen(index)}>
+                    {index == props.infoWinIndex && props.isInfoWinOpen && <InfoWindow onCloseClick={props.onToggleOpen}>
+                        <Typography >{point.name}</Typography></InfoWindow>}
+                </Marker>)
+            }
+            {props.directions.map((direction, index) => <DirectionsRenderer key={index} options={{ suppressMarkers: true, polylineOptions: { strokeColor: getRandomColor() } }} directions={direction} />)}
+        </GoogleMap>
+    )
+}
     )
 
-export default MyMapComponent
+class Map extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        return (
+            <MyMapComponent
+                Plan={this.props.Plan}
+                addPoint={this.props.addPoint}
+            />
+        )
+    }
+}
+
+export default Map

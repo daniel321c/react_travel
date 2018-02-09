@@ -41,38 +41,24 @@ const styles = theme => ({
 });
 
 
-const tokenTarget = {
-	drop(props, monitor) {
-		// props.onDrop(monitor.getItem())
-	},
-}
-
-function collect(connect, monitor) {
-    return {
-        connectDropTarget: connect.dropTarget(),
-        isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
-    }
-}
-
 class Candidate extends React.Component {
-	moveToken(dragIndex, hoverIndex) {
-		const { candidates } = this.state
-		const dragCard = candidates[dragIndex]
+    moveToken(dragIndex, hoverIndex) {
+        const { candidates } = this.state
+        const dragCard = candidates[dragIndex]
 
-        console.log(			update(this.state, {
+        console.log(update(this.state, {
             candidates: {
                 $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]],
             },
         }));
-		this.setState(
-			update(this.state, {
-				candidates: {
-					$splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]],
-				},
-			})
-		)
-	}
+        this.setState(
+            update(this.state, {
+                candidates: {
+                    $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]],
+                },
+            })
+        )
+    }
     constructor(props) {
         super(props);
         this.state = {
@@ -92,6 +78,14 @@ class Candidate extends React.Component {
                         lat: 35.6654860,
                         lng: 139.7706670
                     }
+                },
+                {
+                    id: 2,
+                    name: 'Meguro Kakinokizaka Post Office',
+                    position: {
+                        lat: 35.6189925,
+                        lng: 139.674759
+                    }
                 }
             ],
         };
@@ -99,33 +93,27 @@ class Candidate extends React.Component {
     }
 
     render() {
-        const { 
+        const {
             classes,
-            canDrop,
-            isOver, 
-            connectDropTarget,
         } = this.props;
 
-        const isActive = isOver && canDrop
-
-        return connectDropTarget(
+        return (
             <div className={classes.root}>
-                
-                {isActive? "release to drop": "can't drop"}
 
                 {this.state.candidates.map((data, index) =>
                     <Token
-                        name={data.name} 
+                        name={data.name}
                         key={index}
-                        id = {data.id}
-                        index = {index}
-                        moveToken ={this.moveToken}
-                     />
+                        id={data.id}
+                        index={index}
+                        moveToken={this.moveToken}
+                    />
                 )}
 
 
             </div>
         )
+
     }
 }
 
@@ -133,4 +121,4 @@ Candidate.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default DragDropContext(HTML5Backend)( DropTarget('token', tokenTarget, collect)( withStyles(styles)(Candidate))    );
+export default DragDropContext(HTML5Backend)(withStyles(styles)(Candidate));
