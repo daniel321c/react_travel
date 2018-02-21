@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import GridList, { GridListTile } from 'material-ui/GridList';
-import {tileData} from './data'
+import GridList, { GridListTile, GridListTileBar  } from 'material-ui/GridList';
+import IconButton from 'material-ui/IconButton';
+import { tileData } from './data';
+import InfoIcon from 'material-ui-icons/Info';
 
 //var cities = tileData;
 const styles = theme => ({
@@ -18,12 +20,27 @@ const styles = theme => ({
     },
     gridList: {
         width: '100%',
-        overflow:scroll,
+        overflow: scroll,
         height: '88vh',
     },
     subheader: {
         width: '100%',
     },
+    icon: {
+        color: 'rgba(255, 255, 255, 0.54)',
+    },
+    zoom:{
+        top: 0,
+        left: 0,
+        width: '100%',
+        height: '100%',
+        '-webkit-transform': 'scale(1)',
+        '-webkit-transition': '.3s ease-in-out',
+        '-webkit-backface-visibility': 'hidden',
+        '&:hover':{
+            '-webkit-transform': 'scale(1.3)',
+        }
+    }
 });
 
 function shuffle(a) {
@@ -38,19 +55,19 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function process(cities){
+function process(cities) {
 
-    let x=5;
+    let x = 5;
     let arr = [];
     let random = 0;
-    while (x != 0){
-        while(true){
+    while (x != 0) {
+        while (true) {
             random = getRandomInt(0, 17);
-            if(!arr.includes(random)){
+            if (!arr.includes(random)) {
                 break;
             }
         }
-        cities[random].cols =getRandomInt(2,3);
+        cities[random].cols = getRandomInt(1, 2);
         x--;
     }
     return cities;
@@ -60,18 +77,28 @@ function process(cities){
 class HomePage extends React.Component {
     constructor(props) {
         super(props);
-
+        var cities = shuffle(tileData).slice(0, 20);
+        process(cities);
+        this.state={
+            cities: cities
+        }
     }
     render() {
         const { classes } = this.props;
-        const cities = shuffle(tileData).slice(0,18);
-        process(cities);
         return (
             <div>
                 <GridList cellHeight={160} className={classes.gridList} cols={8}>
-                    {cities.map(data => (
-                        <GridListTile key={data.city} cols={data.cols || 1}>
-                            <img src={require('../assets/images/'+data.city+'.jpg')} alt={data.city} />
+                    {this.state.cities.map(data => (
+                        <GridListTile key={data.city} cols={data.cols || 1} >
+                            <img className={classes.zoom} src={require('../assets/images/' + data.city + '.jpg')} alt={data.city} />
+                            <GridListTileBar
+                                title={data.city}
+                                actionIcon={
+                                    <IconButton className={classes.icon}>
+                                        <InfoIcon />
+                                    </IconButton>
+                                }
+                            />
                         </GridListTile>
                     ))}
                 </GridList>

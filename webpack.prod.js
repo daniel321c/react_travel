@@ -29,7 +29,14 @@ module.exports = {
             {
                 test: /\.(png|jpg)$/,
                 loader: 'url-loader'
-            }
+            },
+            {
+                test: /\.(jpg|png|svg)$/,
+                loader: "file-loader",
+                options: {
+                    name: '[path][name].[ext]',
+                }
+            },
         ]
     },
     plugins: [
@@ -44,23 +51,7 @@ module.exports = {
                 return module.context && module.context.indexOf('node_modules') >= 0;
             }
         }),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                warnings: false,
-                screw_ie8: true,
-                conditionals: true,
-                unused: true,
-                comparisons: true,
-                sequences: true,
-                dead_code: true,
-                evaluate: true,
-                if_return: true,
-                join_vars: true
-            },
-            output: {
-                comments: false
-            }
-        }),
+        new webpack.optimize.UglifyJsPlugin(),
         new webpack.HashedModuleIdsPlugin(),
         new HtmlWebpackPlugin({
             template: './src/index.html',

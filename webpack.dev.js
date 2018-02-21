@@ -6,8 +6,8 @@ module.exports = {
     output: {
         path: path.resolve('dist'),
         filename: 'bundle.js'
-	},
-	devtool: "source-map",
+    },
+    devtool: "source-map",
     resolve: {
         extensions: ['.js', '.jsx']
     },
@@ -21,9 +21,20 @@ module.exports = {
                     presets: ['react', 'es2015', 'stage-3']
                 }
             },
-            { 
-                test: /\.(png|jpg)$/, 
-                loader: 'url-loader' }
+            {
+                test: /\.(png|jpg)$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 8192,
+                  }
+            },
+            {
+                test: /\.(JPG|png|svg)$/,
+                loader: "file-loader",
+                options: {
+                    name: '[path][name].[ext]',
+                }
+            },
         ]
     },
     plugins: [new HtmlWebpackPlugin({
@@ -35,6 +46,6 @@ module.exports = {
         historyApiFallback: true,
         proxy: {
             "/api": "http://localhost:3000"
-          }
+        }
     }
 }
