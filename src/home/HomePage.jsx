@@ -4,10 +4,12 @@ import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
 import { withStyles } from 'material-ui/styles';
-import GridList, { GridListTile, GridListTileBar  } from 'material-ui/GridList';
+import GridList, { GridListTile, GridListTileBar } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import { tileData } from './data';
 import InfoIcon from 'material-ui-icons/Info';
+import Modal from 'material-ui/Modal';
+import Typography from 'material-ui/Typography';
 
 //var cities = tileData;
 const styles = theme => ({
@@ -29,7 +31,7 @@ const styles = theme => ({
     icon: {
         color: 'rgba(255, 255, 255, 0.54)',
     },
-    zoom:{
+    zoom: {
         top: 0,
         left: 0,
         width: '100%',
@@ -37,10 +39,17 @@ const styles = theme => ({
         '-webkit-transform': 'scale(1)',
         '-webkit-transition': '.3s ease-in-out',
         '-webkit-backface-visibility': 'hidden',
-        '&:hover':{
+        '&:hover': {
             '-webkit-transform': 'scale(1.3)',
         }
-    }
+    },
+    paper: {
+        position: 'absolute',
+        width: theme.spacing.unit * 50,
+        backgroundColor: theme.palette.background.paper,
+        boxShadow: theme.shadows[5],
+        padding: theme.spacing.unit * 4,
+    },
 });
 
 function shuffle(a) {
@@ -73,23 +82,54 @@ function process(cities) {
     return cities;
 }
 
+function rand() {
+    return Math.round(Math.random() * 20) - 10;
+}
+
+function getModalStyle() {
+    const top = 50;
+    const left = 50;
+
+    return {
+        top: `${top}%`,
+        left: `${left}%`,
+        transform: `translate(-${top}%, -${left}%)`,
+    };
+}
 
 class HomePage extends React.Component {
+
+    showCityDetail(index) {
+        this.handleOpen();
+    }
+    handleOpen() {
+        this.setState({ open: true });
+    };
+
+    handleClose() {
+        this.setState({ open: false });
+    };
+
     constructor(props) {
         super(props);
         var cities = shuffle(tileData).slice(0, 20);
         process(cities);
-        this.state={
-            cities: cities
+        this.state = {
+            cities: cities,
+            open: true,
+            modalCity: 'Hong Kong',
         }
+        this.showCityDetail = this.showCityDetail.bind(this);
+        this.handleOpen = this.handleOpen.bind(this);
+        this.handleClose = this.handleClose.bind(this);
     }
     render() {
         const { classes } = this.props;
         return (
             <div>
                 <GridList cellHeight={160} className={classes.gridList} cols={8}>
-                    {this.state.cities.map(data => (
-                        <GridListTile key={data.city} cols={data.cols || 1} >
+                    {this.state.cities.map((data, index) => (
+                        <GridListTile onClick={() => this.showCityDetail(index)} key={data.city} cols={data.cols || 1} >
                             <img className={classes.zoom} src={require('../assets/images/' + data.city + '.jpg')} alt={data.city} />
                             <GridListTileBar
                                 title={data.city}
@@ -102,6 +142,16 @@ class HomePage extends React.Component {
                         </GridListTile>
                     ))}
                 </GridList>
+                <Modal aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description" open={this.state.open} onClose={this.handleClose}>
+                    <div style={getModalStyle()} className={classes.paper}>
+
+                        
+                        <Typography variant="title" id="modal-title">
+                            {this.state.modalCity}
+                        </Typography>
+                    </div>
+                </Modal>
+
             </div>
         );
     }
