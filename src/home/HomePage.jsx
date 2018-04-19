@@ -10,7 +10,14 @@ import { tileData } from './data';
 import InfoIcon from 'material-ui-icons/Info';
 import Modal from 'material-ui/Modal';
 import Typography from 'material-ui/Typography';
+import Paper from 'material-ui/Paper';
+import Grid from 'material-ui/Grid';
+import {poiData} from './poi'
+import List, { ListItem, ListItemText } from 'material-ui/List';
+import ReactStars from 'react-stars'
+import { placeService } from '../services/google/place.service';
 
+console.log(poiData)
 //var cities = tileData;
 const styles = theme => ({
     root: {
@@ -45,11 +52,30 @@ const styles = theme => ({
     },
     paper: {
         position: 'absolute',
-        width: theme.spacing.unit * 50,
+        width: '97%',
+        height: '83%',
         backgroundColor: theme.palette.background.paper,
         boxShadow: theme.shadows[5],
         padding: theme.spacing.unit * 4,
     },
+    scrollbar: {
+        overflowY: 'scroll',
+        maxHeight: '100%',
+        '&::-webkit-scrollbar': {
+          width: 10,
+          backgroundColor: '#F5F5F5',
+        },
+        '&::-webkit-scrollbar-thumb': {
+          borderRadius: 10,
+          WebkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,.3)',
+          backgroundColor: '#3f51b5',
+        },
+        '&::-webkit-scrollbar-track': {
+          WebkitBoxShadow: 'inset 0 0 6px rgba(0,0,0,0.3)',
+          borderRadius: 10,
+          backgroundColor: '#F5F5F5',
+        }
+      },
 });
 
 function shuffle(a) {
@@ -99,6 +125,9 @@ function getModalStyle() {
 
 class HomePage extends React.Component {
 
+    getPlaceDetails(placeid){
+        console.log(placeService.placeDetails(placeid));
+    }
     showCityDetail(index) {
         this.handleOpen();
     }
@@ -122,6 +151,7 @@ class HomePage extends React.Component {
         this.showCityDetail = this.showCityDetail.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
         this.handleClose = this.handleClose.bind(this);
+        this.getPlaceDetails = this.getPlaceDetails.bind(this);
     }
     render() {
         const { classes } = this.props;
@@ -145,10 +175,32 @@ class HomePage extends React.Component {
                 <Modal aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description" open={this.state.open} onClose={this.handleClose}>
                     <div style={getModalStyle()} className={classes.paper}>
 
-                        
-                        <Typography variant="title" id="modal-title">
-                            {this.state.modalCity}
-                        </Typography>
+                        <Grid container spacing={24} style={{height:'100%'}}>
+                            <Grid item xs={4}>
+                                <Paper >
+                                    <div style={{padding:10}}>
+                                    <img src={require('../assets/images/' + this.state.modalCity + '.jpg')} alt={this.state.modalCity} />
+                                    </div>
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Paper className={classes.scrollbar} >
+                                <List>
+                                {poiData.results.map((data, index)=>
+                                    <ListItem onClick={()=>this.getPlaceDetails(data.place_id)}> 
+                                        <Grid item xs={8}>{data.name}</Grid> 
+                                        <Grid item xs={3}><ReactStars edit={false} value={data.rating} count={5} size={24} color2={'#ffd700'} /> </Grid>
+                                        <Grid item xs={1}>{data.rating}</Grid>
+                                    </ListItem>
+                                    )}
+                                </List>
+                                </Paper>
+                            </Grid>
+                            <Grid item xs={4}>
+                                <Paper >Coutry / City Disaster Graph/ seasonal ; annual tourism arrival; criminal rate/safety</Paper>
+                            </Grid>
+
+                        </Grid>
                     </div>
                 </Modal>
 

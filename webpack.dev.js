@@ -35,6 +35,10 @@ module.exports = {
                     name: '[path][name].[ext]',
                 }
             },
+            {   
+                test: /\.json$/, 
+                loader: 'json-loader' 
+            },
         ]
     },
     plugins: [new HtmlWebpackPlugin({
