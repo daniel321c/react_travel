@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
 
 
-const buildPath = path.join(__dirname, 'dist');
+const buildPath = path.join(__dirname, 'build');
 
 module.exports = {
     devtool: 'cheap-module-source-map',
