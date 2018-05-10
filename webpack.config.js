@@ -34,6 +34,7 @@ module.exports = {
     devServer: {
         historyApiFallback: true,
         proxy: {
+            "/google": "http://localhost:3000",
             "/api": "http://localhost:3000"
           }
     }

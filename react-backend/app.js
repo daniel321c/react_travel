@@ -9,7 +9,8 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 
-var api_routes = require('./routes/apiRouter');
+var userApi = require('./routes/user.api');
+var googleApi = require('./routes/google.api');
 
 var app = express();
 
@@ -27,7 +28,9 @@ app.use(require('express-session')({
 app.use(passport.initialize());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api', api_routes);
+
+app.use('/google', googleApi)
+app.use('/api', userApi);
 
 
 // passport config

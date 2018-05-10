@@ -13,11 +13,13 @@ import Typography from 'material-ui/Typography';
 import Paper from 'material-ui/Paper';
 import Grid from 'material-ui/Grid';
 import {poiData} from './poi'
-import List, { ListItem, ListItemText } from 'material-ui/List';
+import List, { ListItemAvatar,  ListItemIcon, ListItem, ListItemText } from 'material-ui/List';
 import ReactStars from 'react-stars'
 import { placeService } from '../services/google/place.service';
+import Card, { CardActions, CardContent, CardMedia } from 'material-ui/Card';
 
-console.log(poiData)
+import {PlaceModal} from './components/PlaceModal'
+
 //var cities = tileData;
 const styles = theme => ({
     root: {
@@ -75,7 +77,14 @@ const styles = theme => ({
           borderRadius: 10,
           backgroundColor: '#F5F5F5',
         }
-      },
+    },
+    card: {
+        maxWidth: 345,
+    },
+    media: {
+        height: 0,
+        paddingTop: '56.25%', // 16:9
+    },
 });
 
 function shuffle(a) {
@@ -128,16 +137,17 @@ class HomePage extends React.Component {
     getPlaceDetails(placeid){
         console.log(placeService.placeDetails(placeid));
     }
-    showCityDetail(index) {
-        this.handleOpen();
+    showCityDetail(city) {
+        this.setState({
+            open: true,
+            modalCity: city
+        })
     }
     handleOpen() {
         this.setState({ open: true });
     };
 
-    handleClose() {
-        this.setState({ open: false });
-    };
+
 
     constructor(props) {
         super(props);
@@ -150,7 +160,6 @@ class HomePage extends React.Component {
         }
         this.showCityDetail = this.showCityDetail.bind(this);
         this.handleOpen = this.handleOpen.bind(this);
-        this.handleClose = this.handleClose.bind(this);
         this.getPlaceDetails = this.getPlaceDetails.bind(this);
     }
     render() {
@@ -159,7 +168,7 @@ class HomePage extends React.Component {
             <div>
                 <GridList cellHeight={160} className={classes.gridList} cols={8}>
                     {this.state.cities.map((data, index) => (
-                        <GridListTile onClick={() => this.showCityDetail(index)} key={data.city} cols={data.cols || 1} >
+                        <GridListTile onClick={() => this.showCityDetail(data.city)} key={data.city} cols={data.cols || 1} >
                             <img className={classes.zoom} src={require('../assets/images/' + data.city + '.jpg')} alt={data.city} />
                             <GridListTileBar
                                 title={data.city}
@@ -172,38 +181,7 @@ class HomePage extends React.Component {
                         </GridListTile>
                     ))}
                 </GridList>
-                <Modal aria-labelledby="simple-modal-title" aria-describedby="simple-modal-description" open={this.state.open} onClose={this.handleClose}>
-                    <div style={getModalStyle()} className={classes.paper}>
-
-                        <Grid container spacing={24} style={{height:'100%'}}>
-                            <Grid item xs={4}>
-                                <Paper >
-                                    <div style={{padding:10}}>
-                                    <img src={require('../assets/images/' + this.state.modalCity + '.jpg')} alt={this.state.modalCity} />
-                                    </div>
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Paper className={classes.scrollbar} >
-                                <List>
-                                {poiData.results.map((data, index)=>
-                                    <ListItem onClick={()=>this.getPlaceDetails(data.place_id)}> 
-                                        <Grid item xs={8}>{data.name}</Grid> 
-                                        <Grid item xs={3}><ReactStars edit={false} value={data.rating} count={5} size={24} color2={'#ffd700'} /> </Grid>
-                                        <Grid item xs={1}>{data.rating}</Grid>
-                                    </ListItem>
-                                    )}
-                                </List>
-                                </Paper>
-                            </Grid>
-                            <Grid item xs={4}>
-                                <Paper >Coutry / City Disaster Graph/ seasonal ; annual tourism arrival; criminal rate/safety</Paper>
-                            </Grid>
-
-                        </Grid>
-                    </div>
-                </Modal>
-
+                <PlaceModal isOpen={this.state.open} city={this.state.modalCity}/>
             </div>
         );
     }

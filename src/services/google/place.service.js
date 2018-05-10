@@ -1,36 +1,49 @@
 import appendQuery from "append-query"
-var Key = 'AIzaSyAbFWCJYlKzVOrEesawE0X3qpcHaDpFHqI'
+import { authHeader } from '../api/auth_header';
+
 
 export const placeService = {
     placeDetails,
+    placePhoto,
 };
 
-function placeDetails(placeid){
-    gapi.load('auth2', function() {
-        // Library loaded.
-      });
-    var path = "https://maps.googleapis.com/maps/api/place/details/json";
-    var params ={
-        key: Key,
-        placeid: placeid
-    }
+var Host = "https://maps.googleapis.com"
+var Key = 'AIzaSyAbFWCJYlKzVOrEesawE0X3qpcHaDpFHqI'
 
-    var user = gapi.auth2.getAuthInstance().currentUser.get();
-    var oauthToken = user.getAuthResponse().access_token;
+function placeDetails(placeid) {
 
     const requestOptions = {
-        mode: 'cors',
-        headers: { 'Authorization': 'Bearer ' + oauthToken},
+        method: 'GET',
+        headers: authHeader()
     };
 
-    var url = appendQuery(path, params);
-
-    return fetch(url, requestOptions)
-        .then(res=>{
-            if(!res.ok){
-                return Promise.reject(res.statusText)
+    return fetch('/google/place/details?placeid=' + placeid, requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(response.statusText)
             }
-            console.log(res);
-            return res;
+            return response.json();
         })
+        .then(json => {
+            return json;
+        })
+
+}
+
+function placePhoto(ref) {
+    var path = "/maps/api/place/photo"
+    var params = {
+        maxwidth: 400,
+        photoreference: ref,
+        key: Key
+    }
+    return appendQuery(Host + path, params)
+}
+
+
+function handleResponse(response) {
+    if (!response.ok) {
+        return Promise.reject(response.statusText);
+    }
+    return response.json();
 }

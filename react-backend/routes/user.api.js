@@ -6,9 +6,9 @@ var config = require('../config');
 var User = require('../models/user');
 
 var app = express();
-var apiRoutes = express.Router();
+var userApi = express.Router();
 
-apiRoutes.post('/authenticate', function (req, res, next) {
+userApi.post('/authenticate', function (req, res, next) {
     passport.authenticate('local-login', function (err, user, info) {
         if (err) { return next(err); }
         if (!user) { return res.json({ success: false, message: info.message }) };
@@ -29,7 +29,7 @@ apiRoutes.post('/authenticate', function (req, res, next) {
     })(req, res, next);
 });
 
-apiRoutes.post('/signup', function(req, res, next){
+userApi.post('/signup', function(req, res, next){
 
     passport.authenticate('local-signup', function(err,user,info){
 
@@ -55,7 +55,7 @@ apiRoutes.post('/signup', function(req, res, next){
 
 
 // route middleware to verify a token
-apiRoutes.use(function (req, res, next) {
+userApi.use(function (req, res, next) {
 
     // check header or url parameters or post parameters for token
     var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -85,15 +85,15 @@ apiRoutes.use(function (req, res, next) {
     }
 });
 
-apiRoutes.get('/', function (req, res, next) {
+userApi.get('/', function (req, res, next) {
     res.json({ message: 'Welcome to API' });
 });
 
-apiRoutes.get('/users', function (req, res) {
+userApi.get('/users', function (req, res) {
     User.find({}, (err, users) => {
         res.json(users);
     })
 });
 
 
-module.exports = apiRoutes;
+module.exports = userApi;

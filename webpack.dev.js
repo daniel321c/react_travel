@@ -2,7 +2,7 @@ var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './src/index.jsx',
+    entry: ['babel-polyfill', './src/index.jsx'],
     output: {
         path: path.resolve('dist'),
         filename: 'bundle.js'
@@ -49,7 +49,8 @@ module.exports = {
     devServer: {
         historyApiFallback: true,
         proxy: {
-            "/api": "http://localhost:3000"
+            "/api": "http://localhost:3000",
+            "/google": "http://localhost:3000",
         }
     }
 }

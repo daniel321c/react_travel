@@ -8,7 +8,7 @@ const buildPath = path.join(__dirname, 'dist');
 
 module.exports = {
     devtool: 'cheap-module-source-map',
-    entry: './src/index.jsx',
+    entry: ['babel-polyfill', './src/index.jsx'],
     output: {
         path: buildPath,
         filename: '[name].[chunkhash].js',
@@ -69,7 +69,8 @@ module.exports = {
     devServer: {
         historyApiFallback: true,
         proxy: {
-            "/api": "http://localhost:3000"
+            "/api": "http://localhost:3000",
+            "/google": "http://localhost:3000"
         }
     }
 }
