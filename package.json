@@ -11,7 +11,7 @@
   },
   "author": "Daniel",
   "license": "ISC",
-  "homepage": "https://daniel321c.github.io",
+  "homepage": "https://daniel321c.github.io/react_travel",
   "dependencies": {
     "append-query": "^2.0.1",
     "autoprefixer": "^8.0.0",
